@@ -14,6 +14,8 @@ import Team from "./pages/Team";
 import Ranking from "./pages/Ranking";
 import Marketing from "./pages/Marketing";
 import Wallet from "./pages/Wallet";
+import Settings from "./pages/Settings";
+import Admin from "./pages/Admin";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +37,8 @@ const App = () => (
           <Route path="/ranking" element={<Ranking />} />
           <Route path="/marketing" element={<Marketing />} />
           <Route path="/wallet" element={<Wallet />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/admin" element={<Admin />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
