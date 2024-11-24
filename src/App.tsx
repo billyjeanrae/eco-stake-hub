@@ -13,6 +13,7 @@ import History from "./pages/History";
 import Team from "./pages/Team";
 import Ranking from "./pages/Ranking";
 import Marketing from "./pages/Marketing";
+import Wallet from "./pages/Wallet";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/team" element={<Team />} />
           <Route path="/ranking" element={<Ranking />} />
           <Route path="/marketing" element={<Marketing />} />
+          <Route path="/wallet" element={<Wallet />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
