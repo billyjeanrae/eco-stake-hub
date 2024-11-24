@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Wallet, QrCode, Plus, Copy, ArrowUpRight } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import QRCode from "qrcode.react";
+import { QRCodeSVG } from "qrcode.react"; // Changed from default import to named import
 import { useState } from "react";
 
 const WalletPage = () => {
@@ -108,14 +108,13 @@ const WalletPage = () => {
           ))}
         </div>
 
-        {/* Deposit Section */}
         <Card className="p-6 glass-card">
           <h2 className="text-lg font-bold mb-4">Deposit CLT</h2>
           <div className="flex flex-col md:flex-row gap-6">
             <div className="flex-1">
               <p className="text-sm text-gray-400 mb-2">Scan QR Code</p>
               <div className="bg-white p-4 rounded-lg inline-block">
-                <QRCode
+                <QRCodeSVG
                   value="0x1234567890abcdef"
                   size={200}
                   level="H"
