@@ -1,26 +1,27 @@
-import { Bell, Menu, User } from "lucide-react";
+import { Bell, Menu, User, LayoutDashboard, History, Users, Trophy, Gift, Megaphone, Server, ArrowLeftRight } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   
   const navigation = [
-    { name: "Dashboard", href: "/" },
-    { name: "Staking", href: "/staking" },
-    { name: "History", href: "/history" },
-    { name: "Team", href: "/team" },
-    { name: "Ranking", href: "/ranking" },
-    { name: "Marketing", href: "/marketing" },
+    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Validators", href: "/validators", icon: Server },
+    { name: "Swap", href: "/swap", icon: ArrowLeftRight },
+    { name: "History", href: "/history", icon: History },
+    { name: "Team", href: "/team", icon: Users },
+    { name: "Ranking", href: "/ranking", icon: Trophy },
+    { name: "Bonus Pools", href: "/bonus-pools", icon: Gift },
+    { name: "Marketing", href: "/marketing", icon: Megaphone },
   ];
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Sidebar */}
-      <aside className="fixed top-0 left-0 h-full w-64 bg-titan-dark border-r border-white/10">
+    <div className="min-h-screen bg-platform-dark">
+      <aside className="fixed top-0 left-0 h-full w-64 bg-platform-card border-r border-white/10">
         <div className="p-6">
           <Link to="/" className="flex items-center space-x-2">
             <img src="/placeholder.svg" alt="Logo" className="w-8 h-8" />
-            <span className="text-xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+            <span className="text-xl font-bold bg-gradient-to-r from-platform-green to-platform-green-dark bg-clip-text text-transparent">
               Scavenger X
             </span>
           </Link>
@@ -31,22 +32,21 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
             <Link
               key={item.name}
               to={item.href}
-              className={`flex items-center px-6 py-3 text-sm ${
+              className={`flex items-center px-6 py-3 text-sm space-x-3 ${
                 location.pathname === item.href
-                  ? "text-primary border-l-2 border-primary bg-primary/10"
+                  ? "text-platform-green border-l-2 border-platform-green bg-platform-green/10"
                   : "text-gray-400 hover:text-white hover:bg-white/5"
               }`}
             >
-              {item.name}
+              <item.icon className="w-5 h-5" />
+              <span>{item.name}</span>
             </Link>
           ))}
         </nav>
       </aside>
 
-      {/* Main content */}
       <div className="pl-64">
-        {/* Header */}
-        <header className="h-16 border-b border-white/10 flex items-center justify-between px-6">
+        <header className="h-16 border-b border-white/10 flex items-center justify-between px-6 bg-platform-card/50 backdrop-blur-lg">
           <div className="flex items-center space-x-4">
             <button className="p-2 hover:bg-white/5 rounded-lg">
               <Menu className="w-5 h-5" />
@@ -63,7 +63,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
           </div>
         </header>
 
-        {/* Page content */}
         <main className="p-6">{children}</main>
       </div>
     </div>

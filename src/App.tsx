@@ -7,6 +7,8 @@ import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
+import Validators from "./pages/Validators";
+import Swap from "./pages/Swap";
 import History from "./pages/History";
 import Team from "./pages/Team";
 import Ranking from "./pages/Ranking";
@@ -25,6 +27,8 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/validators" element={<Validators />} />
+          <Route path="/swap" element={<Swap />} />
           <Route path="/history" element={<History />} />
           <Route path="/team" element={<Team />} />
           <Route path="/ranking" element={<Ranking />} />

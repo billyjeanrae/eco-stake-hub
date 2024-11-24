@@ -52,9 +52,11 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        titan: {
-          purple: "#9b87f5",
-          dark: "#1A1F2C",
+        platform: {
+          dark: "#0A0F1C",
+          card: "#151928",
+          green: "#00FF9D",
+          "green-dark": "#00CC7E",
         },
       },
       keyframes: {
