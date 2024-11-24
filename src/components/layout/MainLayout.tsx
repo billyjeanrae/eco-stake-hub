@@ -1,4 +1,4 @@
-import { Bell, Menu, User, LayoutDashboard, History, Users, Trophy, Gift, Megaphone, Server, ArrowLeftRight, Settings, ChevronRight, ChevronLeft } from "lucide-react";
+import { Bell, Menu, User, LayoutDashboard, History, Users, Trophy, Gift, Megaphone, Server, ArrowLeftRight, Settings, ChevronRight, ChevronLeft, Wallet } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
