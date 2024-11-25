@@ -47,7 +47,7 @@
 }
 
 .glass-card {
-  @apply bg-platform-card/80 backdrop-blur-lg border border-white/10 rounded-lg;
+  @apply bg-platform-card/40 backdrop-blur-lg border border-white/10 rounded-lg;
 }
 
 .gradient-border {
@@ -58,4 +58,17 @@
 
 .gradient-border > * {
   @apply bg-platform-dark rounded-lg;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }
