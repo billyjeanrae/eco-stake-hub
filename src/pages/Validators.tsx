@@ -15,7 +15,7 @@ const Validators = () => {
 
   const stats = [
     { label: "Your Validators", value: "0", icon: Server },
-    { label: "Total Staked", value: "0 T369", icon: DollarSign },
+    { label: "Total Staked", value: "0 CLT", icon: DollarSign },
     { label: "Next Earning Cycle", value: "16h 12m 10s", icon: Clock },
   ];
 
@@ -54,7 +54,7 @@ const Validators = () => {
                     <div>
                       <h3 className="font-semibold">Tier {tier.tier} Validator</h3>
                       <p className="text-sm text-gray-400">
-                        Minimum Investment: {tier.minInvestment} T369
+                        Minimum Investment: {tier.minInvestment} CLT
                       </p>
                     </div>
                   </div>

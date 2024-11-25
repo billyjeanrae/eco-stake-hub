@@ -6,19 +6,19 @@ const Team = () => {
     {
       name: "Alice Johnson",
       role: "Team Leader",
-      staked: "25,000 T369",
+      staked: "25,000 CLT",
       referrals: 12,
     },
     {
       name: "Bob Smith",
       role: "Member",
-      staked: "15,000 T369",
+      staked: "15,000 CLT",
       referrals: 8,
     },
     {
       name: "Carol Williams",
       role: "Member",
-      staked: "10,000 T369",
+      staked: "10,000 CLT",
       referrals: 5,
     },
   ];
@@ -36,11 +36,11 @@ const Team = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card className="p-6 glass-card">
             <h3 className="text-sm text-gray-400 mb-2">Total Team Stake</h3>
-            <p className="text-2xl font-bold">50,000 T369</p>
+            <p className="text-2xl font-bold">50,000 CLT</p>
           </Card>
           <Card className="p-6 glass-card">
             <h3 className="text-sm text-gray-400 mb-2">Team Rewards</h3>
-            <p className="text-2xl font-bold">2,500 T369</p>
+            <p className="text-2xl font-bold">2,500 CLT</p>
           </Card>
           <Card className="p-6 glass-card">
             <h3 className="text-sm text-gray-400 mb-2">Total Referrals</h3>
