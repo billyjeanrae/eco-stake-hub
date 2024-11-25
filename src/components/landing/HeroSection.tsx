@@ -37,19 +37,19 @@ const HeroSection = () => {
             </div>
           </div>
 
-          {/* Floating Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl mt-20">
-            <div className="glass-card p-8 animate-float backdrop-blur-xl">
-              <p className="text-platform-green font-bold text-4xl">500ms</p>
-              <p className="text-xl text-gray-400">Avg. Response Time</p>
+          {/* Enhanced Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl mt-32">
+            <div className="glass-card p-10 animate-float backdrop-blur-xl">
+              <p className="text-platform-green font-bold text-5xl mb-4">$50M+</p>
+              <p className="text-2xl text-gray-400">Total Value Locked</p>
             </div>
-            <div className="glass-card p-8 animate-float delay-300 backdrop-blur-xl">
-              <p className="text-platform-green font-bold text-4xl">99.9%</p>
-              <p className="text-xl text-gray-400">Energy Efficient</p>
+            <div className="glass-card p-10 animate-float delay-300 backdrop-blur-xl">
+              <p className="text-platform-green font-bold text-5xl mb-4">15K+</p>
+              <p className="text-2xl text-gray-400">Active Validators</p>
             </div>
-            <div className="glass-card p-8 animate-float delay-500 backdrop-blur-xl">
-              <p className="text-platform-green font-bold text-4xl">24/7</p>
-              <p className="text-xl text-gray-400">Global Support</p>
+            <div className="glass-card p-10 animate-float delay-500 backdrop-blur-xl">
+              <p className="text-platform-green font-bold text-5xl mb-4">99.9%</p>
+              <p className="text-2xl text-gray-400">Carbon Neutral</p>
             </div>
           </div>
         </div>

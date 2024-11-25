@@ -1,5 +1,6 @@
-import { Shield, Leaf, Cpu, Users, Zap, Globe, ArrowRight } from "lucide-react";
+import { Shield, Leaf, Cpu, Users, Zap, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const FeaturesSection = () => {
   const features = [
@@ -70,11 +71,20 @@ const FeaturesSection = () => {
           ))}
         </div>
 
-        <div className="mt-24 text-center">
-          <Button size="lg" className="bg-platform-green hover:bg-platform-green-dark text-black text-xl px-12 py-8 rounded-full transition-all duration-300 hover:scale-105">
-            Explore All Features
-            <ArrowRight className="ml-3 w-6 h-6" />
-          </Button>
+        {/* Enhanced Call to Action Section */}
+        <div className="mt-32 text-center max-w-4xl mx-auto">
+          <h3 className="text-4xl md:text-5xl font-bold mb-8 bg-gradient-to-r from-platform-green to-platform-green-dark bg-clip-text text-transparent">
+            Ready to Join the Future of Sustainable Staking?
+          </h3>
+          <p className="text-xl md:text-2xl text-gray-400 mb-12">
+            Join thousands of validators and stakers who are already contributing to a greener blockchain future while earning CLT rewards.
+          </p>
+          <Link to="/signup" className="inline-block">
+            <Button size="lg" className="bg-platform-green hover:bg-platform-green-dark text-black text-xl px-12 py-8 rounded-full transition-all duration-300 hover:scale-105">
+              Start Staking Now
+              <ArrowRight className="ml-3 w-6 h-6" />
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
