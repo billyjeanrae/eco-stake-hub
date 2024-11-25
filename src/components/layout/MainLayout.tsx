@@ -1,4 +1,4 @@
-import { Bell, Menu, User, LayoutDashboard, History, Users, Trophy, Gift, Megaphone, Server, ArrowLeftRight, Settings, ChevronRight, ChevronLeft, Wallet } from "lucide-react";
+import { Bell, Menu, User, LayoutDashboard, History, Users, Trophy, Megaphone, Server, ArrowLeftRight, Settings, ChevronRight, ChevronLeft, Wallet } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -28,7 +28,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
     { name: "History", href: "/history", icon: History },
     { name: "Team", href: "/team", icon: Users },
     { name: "Ranking", href: "/ranking", icon: Trophy },
-    { name: "Bonus Pools", href: "/bonus-pools", icon: Gift },
     { name: "Marketing", href: "/marketing", icon: Megaphone },
     { name: "Wallet", href: "/wallet", icon: Wallet },
   ];

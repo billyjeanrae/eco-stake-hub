@@ -6,19 +6,19 @@ const History = () => {
     {
       date: "2024-02-20",
       type: "Stake",
-      amount: "1000 T369",
+      amount: "1000 CLT",
       status: "Completed",
     },
     {
       date: "2024-02-19",
       type: "Reward",
-      amount: "50 T369",
+      amount: "50 CLT",
       status: "Completed",
     },
     {
       date: "2024-02-18",
       type: "Unstake",
-      amount: "500 T369",
+      amount: "500 CLT",
       status: "Pending",
     },
   ];

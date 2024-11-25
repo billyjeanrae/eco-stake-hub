@@ -6,22 +6,22 @@ const Ranking = () => {
     {
       rank: 1,
       name: "Alice Johnson",
-      staked: "100,000 T369",
-      rewards: "5,000 T369",
+      staked: "100,000 CLT",
+      rewards: "5,000 CLT",
       level: "Diamond",
     },
     {
       rank: 2,
       name: "Bob Smith",
-      staked: "75,000 T369",
-      rewards: "3,750 T369",
+      staked: "75,000 CLT",
+      rewards: "3,750 CLT",
       level: "Platinum",
     },
     {
       rank: 3,
       name: "Carol Williams",
-      staked: "50,000 T369",
-      rewards: "2,500 T369",
+      staked: "50,000 CLT",
+      rewards: "2,500 CLT",
       level: "Gold",
     },
   ];

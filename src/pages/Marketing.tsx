@@ -40,7 +40,6 @@ const Marketing = () => {
       <div className="space-y-6 animate-fade-in">
         <h1 className="text-2xl font-bold">Marketing Tools</h1>
 
-        {/* Referral Section */}
         <Card className="p-6 glass-card">
           <h2 className="text-xl font-bold mb-4">Your Referral Link</h2>
           <div className="flex gap-2">
@@ -61,7 +60,6 @@ const Marketing = () => {
           </p>
         </Card>
 
-        {/* Stats Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card className="p-6 glass-card">
             <h3 className="text-sm text-gray-400 mb-2">Total Referrals</h3>
@@ -69,7 +67,7 @@ const Marketing = () => {
           </Card>
           <Card className="p-6 glass-card">
             <h3 className="text-sm text-gray-400 mb-2">Earned Rewards</h3>
-            <p className="text-2xl font-bold">1,200 T369</p>
+            <p className="text-2xl font-bold">1,200 CLT</p>
           </Card>
           <Card className="p-6 glass-card">
             <h3 className="text-sm text-gray-400 mb-2">Active Referrals</h3>
@@ -77,7 +75,6 @@ const Marketing = () => {
           </Card>
         </div>
 
-        {/* Marketing Materials */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {marketingMaterials.map((material, index) => (
             <Card key={index} className="p-6 glass-card">
