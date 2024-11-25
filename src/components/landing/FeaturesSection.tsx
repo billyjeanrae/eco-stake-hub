@@ -1,4 +1,4 @@
-import { Shield, Leaf, Cpu, Users, Zap, Globe } from "lucide-react";
+import { Shield, Leaf, Cpu, Users, Zap, Globe, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const FeaturesSection = () => {
