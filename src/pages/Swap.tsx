@@ -13,9 +13,9 @@ import {
 
 const Swap = () => {
   const balances = [
-    { label: "Active Wallet Balance", value: "0 T369" },
-    { label: "Validator Balance", value: "0 T369" },
-    { label: "Affiliate Balance", value: "0 T369" },
+    { label: "Active Wallet Balance", value: "0 CLT" },
+    { label: "Validator Balance", value: "0 CLT" },
+    { label: "Affiliate Balance", value: "0 CLT" },
   ];
 
   return (
@@ -56,7 +56,7 @@ const Swap = () => {
                     <SelectValue placeholder="Select token" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="t369">T369</SelectItem>
+                    <SelectItem value="clt">CLT</SelectItem>
                     <SelectItem value="usdt">USDT</SelectItem>
                     <SelectItem value="eth">ETH</SelectItem>
                   </SelectContent>
