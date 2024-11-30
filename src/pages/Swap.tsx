@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import MainLayout from "@/components/layout/MainLayout";
-import { ArrowDownUp, Wallet } from "lucide-react";
 import {
   Select,
   SelectContent,
