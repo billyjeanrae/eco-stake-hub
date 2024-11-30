@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Users, Wallet, Settings, Bell, Database, Shield, Percent } from "lucide-react";
+import { Users, Wallet, Shield, Percent } from "lucide-react";
 import { useState } from "react";
 import { DataTable } from "@/components/ui/data-table";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +13,27 @@ const AdminDashboard = () => {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const queryClient = useQueryClient();
+
+  // Fetch platform statistics
+  const { data: stats } = useQuery({
+    queryKey: ['platform-stats'],
+    queryFn: async () => {
+      const [usersCount, totalStaked, activeValidators] = await Promise.all([
+        supabase.from('profiles').select('id', { count: 'exact' }),
+        supabase.from('stakes').select('amount').eq('status', 'active'),
+        supabase.from('validators').select('id', { count: 'exact' }).eq('status', 'active')
+      ]);
+
+      const totalStakedAmount = totalStaked.data?.reduce((sum, stake) => sum + Number(stake.amount), 0) || 0;
+
+      return {
+        totalUsers: usersCount.count || 0,
+        totalStaked: totalStakedAmount,
+        activeValidators: activeValidators.count || 0,
+      };
+    },
+    refetchInterval: 30000, // Refresh every 30 seconds
+  });
 
   // Fetch validator tiers
   const { data: validatorTiers, isLoading } = useQuery({
@@ -44,10 +65,10 @@ const AdminDashboard = () => {
         description: "Validator tier updated successfully",
       });
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast({
         title: "Error",
-        description: "Failed to update validator tier",
+        description: error.message,
         variant: "destructive",
       });
     }
@@ -117,7 +138,7 @@ const AdminDashboard = () => {
               <Users className="w-8 h-8 text-primary" />
               <div>
                 <h3 className="font-bold">Total Users</h3>
-                <p className="text-2xl">1,234</p>
+                <p className="text-2xl">{stats?.totalUsers || 0}</p>
               </div>
             </div>
           </Card>
@@ -127,7 +148,7 @@ const AdminDashboard = () => {
               <Wallet className="w-8 h-8 text-primary" />
               <div>
                 <h3 className="font-bold">Total CLT Staked</h3>
-                <p className="text-2xl">500,000</p>
+                <p className="text-2xl">{stats?.totalStaked?.toLocaleString() || 0}</p>
               </div>
             </div>
           </Card>
@@ -137,7 +158,7 @@ const AdminDashboard = () => {
               <Shield className="w-8 h-8 text-primary" />
               <div>
                 <h3 className="font-bold">Active Validators</h3>
-                <p className="text-2xl">50</p>
+                <p className="text-2xl">{stats?.activeValidators || 0}</p>
               </div>
             </div>
           </Card>

@@ -5,15 +5,18 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       toast({
@@ -23,12 +26,35 @@ const Signup = () => {
       });
       return;
     }
-    // TODO: Implement actual signup logic
-    toast({
-      title: "Success",
-      description: "Your account has been created successfully.",
-    });
-    navigate("/dashboard");
+
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+          },
+        },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Your account has been created successfully. Please check your email for verification.",
+      });
+      navigate("/dashboard");
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -48,6 +74,19 @@ const Signup = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
+            <Label htmlFor="fullName">Full Name</Label>
+            <Input
+              id="fullName"
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              required
+              className="bg-background/50"
+              disabled={isLoading}
+            />
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
@@ -56,6 +95,7 @@ const Signup = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
               className="bg-background/50"
+              disabled={isLoading}
             />
           </div>
 
@@ -68,6 +108,7 @@ const Signup = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
               className="bg-background/50"
+              disabled={isLoading}
             />
           </div>
 
@@ -80,11 +121,16 @@ const Signup = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
               className="bg-background/50"
+              disabled={isLoading}
             />
           </div>
 
-          <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
-            Sign Up
+          <Button 
+            type="submit" 
+            className="w-full bg-primary hover:bg-primary/90"
+            disabled={isLoading}
+          >
+            {isLoading ? "Creating Account..." : "Sign Up"}
           </Button>
         </form>
 
