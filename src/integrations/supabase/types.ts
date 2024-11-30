@@ -9,7 +9,260 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          created_at: string | null
+          full_name: string | null
+          id: string
+          role: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          full_name?: string | null
+          id: string
+          role?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          full_name?: string | null
+          id?: string
+          role?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      rewards: {
+        Row: {
+          amount: number
+          distributed_at: string | null
+          id: string
+          stake_id: string | null
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          distributed_at?: string | null
+          id?: string
+          stake_id?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          distributed_at?: string | null
+          id?: string
+          stake_id?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rewards_stake_id_fkey"
+            columns: ["stake_id"]
+            isOneToOne: false
+            referencedRelation: "stakes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rewards_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stakes: {
+        Row: {
+          amount: number
+          apy: number
+          created_at: string | null
+          end_date: string | null
+          id: string
+          rewards_earned: number | null
+          start_date: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          apy: number
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          rewards_earned?: number | null
+          start_date?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          apy?: number
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          rewards_earned?: number | null
+          start_date?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stakes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transactions: {
+        Row: {
+          amount: number
+          created_at: string | null
+          description: string | null
+          id: string
+          status: string | null
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          status?: string | null
+          type: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          status?: string | null
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      validator_tiers: {
+        Row: {
+          apy: number
+          created_at: string | null
+          min_investment: number
+          tier: number
+          updated_at: string | null
+        }
+        Insert: {
+          apy: number
+          created_at?: string | null
+          min_investment: number
+          tier: number
+          updated_at?: string | null
+        }
+        Update: {
+          apy?: number
+          created_at?: string | null
+          min_investment?: number
+          tier?: number
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      validators: {
+        Row: {
+          apy: number
+          created_at: string | null
+          id: string
+          investment_amount: number
+          status: string | null
+          tier: number
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          apy: number
+          created_at?: string | null
+          id?: string
+          investment_amount: number
+          status?: string | null
+          tier: number
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          apy?: number
+          created_at?: string | null
+          id?: string
+          investment_amount?: number
+          status?: string | null
+          tier?: number
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "validators_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wallets: {
+        Row: {
+          address: string
+          balance: number | null
+          created_at: string | null
+          id: string
+          private_key: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          address: string
+          balance?: number | null
+          created_at?: string | null
+          id?: string
+          private_key?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          address?: string
+          balance?: number | null
+          created_at?: string | null
+          id?: string
+          private_key?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

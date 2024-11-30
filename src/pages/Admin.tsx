@@ -3,24 +3,99 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Users, Wallet, Settings, Bell, Database, Shield } from "lucide-react";
+import { Users, Wallet, Settings, Bell, Database, Shield, Percent } from "lucide-react";
 import { useState } from "react";
 import { DataTable } from "@/components/ui/data-table";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const AdminDashboard = () => {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
+  const queryClient = useQueryClient();
 
-  const handleUserAction = (action: string, userId: string) => {
-    toast({
-      title: "Action Performed",
-      description: `${action} performed on user ${userId}`,
-    });
+  // Fetch validator tiers
+  const { data: validatorTiers, isLoading } = useQuery({
+    queryKey: ['validator-tiers'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('validator_tiers')
+        .select('*')
+        .order('tier');
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  // Update validator tier mutation
+  const updateTierMutation = useMutation({
+    mutationFn: async ({ tier, apy, min_investment }: { tier: number, apy: number, min_investment: number }) => {
+      const { data, error } = await supabase
+        .from('validator_tiers')
+        .update({ apy, min_investment })
+        .eq('tier', tier);
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['validator-tiers'] });
+      toast({
+        title: "Success",
+        description: "Validator tier updated successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update validator tier",
+        variant: "destructive",
+      });
+    }
+  });
+
+  const handleUpdateTier = (tier: number, apy: number, minInvestment: number) => {
+    updateTierMutation.mutate({ tier, apy, min_investment: minInvestment });
   };
 
-  const mockUsers = [
-    { id: "1", name: "John Doe", email: "john@example.com", walletBalance: "1000 CLT" },
-    { id: "2", name: "Jane Smith", email: "jane@example.com", walletBalance: "2000 CLT" },
+  const validatorColumns = [
+    {
+      key: "tier",
+      header: "Tier",
+      cell: (row: any) => row.tier,
+    },
+    {
+      key: "min_investment",
+      header: "Min Investment (CLT)",
+      cell: (row: any) => (
+        <Input
+          type="number"
+          defaultValue={row.min_investment}
+          onBlur={(e) => handleUpdateTier(row.tier, row.apy, parseFloat(e.target.value))}
+          className="w-32"
+        />
+      ),
+    },
+    {
+      key: "apy",
+      header: "APY (%)",
+      cell: (row: any) => (
+        <Input
+          type="number"
+          defaultValue={row.apy}
+          onBlur={(e) => handleUpdateTier(row.tier, parseFloat(e.target.value), row.min_investment)}
+          className="w-32"
+        />
+      ),
+    },
+    {
+      key: "daily_rewards",
+      header: "Daily Rewards (CLT)",
+      cell: (row: any) => (
+        <div className="text-sm">
+          {((row.min_investment * (row.apy / 100)) / 365).toFixed(2)}
+        </div>
+      ),
+    }
   ];
 
   return (
@@ -69,45 +144,21 @@ const AdminDashboard = () => {
         </div>
 
         <Card className="p-6 glass-card">
-          <h2 className="text-xl font-bold mb-4">User Management</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-white/10">
-                  <th className="text-left p-4">User</th>
-                  <th className="text-left p-4">Email</th>
-                  <th className="text-left p-4">Balance</th>
-                  <th className="text-left p-4">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {mockUsers.map((user) => (
-                  <tr key={user.id} className="border-b border-white/10">
-                    <td className="p-4">{user.name}</td>
-                    <td className="p-4">{user.email}</td>
-                    <td className="p-4">{user.walletBalance}</td>
-                    <td className="p-4">
-                      <div className="flex space-x-2">
-                        <Button
-                          size="sm"
-                          onClick={() => handleUserAction("edit", user.id)}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => handleUserAction("suspend", user.id)}
-                        >
-                          Suspend
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-2">
+              <Percent className="w-5 h-5 text-primary" />
+              <h2 className="text-xl font-bold">Validator Tiers & Rewards</h2>
+            </div>
           </div>
+          
+          {isLoading ? (
+            <div className="text-center py-4">Loading...</div>
+          ) : (
+            <DataTable
+              columns={validatorColumns}
+              data={validatorTiers || []}
+            />
+          )}
         </Card>
       </div>
     </MainLayout>
