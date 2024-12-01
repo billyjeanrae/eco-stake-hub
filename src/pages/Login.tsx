@@ -14,6 +14,28 @@ const Login = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  const handleResendConfirmation = async () => {
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email,
+      });
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Confirmation email sent",
+        description: "Please check your email for the confirmation link.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -24,7 +46,28 @@ const Login = () => {
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        if (error.message.includes("Email not confirmed")) {
+          toast({
+            title: "Email not confirmed",
+            description: (
+              <div className="space-y-2">
+                <p>Please confirm your email address to continue.</p>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleResendConfirmation}
+                >
+                  Resend confirmation email
+                </Button>
+              </div>
+            ),
+            duration: 10000,
+          });
+          return;
+        }
+        throw error;
+      }
 
       toast({
         title: "Success",
