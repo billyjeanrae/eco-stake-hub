@@ -1,6 +1,6 @@
-import { Bell, Menu, User, LayoutDashboard, History, Users, Trophy, Megaphone, Server, ArrowLeftRight, Settings, ChevronRight, ChevronLeft, Wallet } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { Bell, Menu, User, LayoutDashboard, History, Users, Trophy, Megaphone, Server, ArrowLeftRight, Settings, ChevronRight, ChevronLeft, Wallet, LogOut } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,15 +11,41 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isMinimized, setIsMinimized] = useState(false);
   const { toast } = useToast();
   const [notifications, setNotifications] = useState([
     { id: 1, title: "New Reward", message: "You earned 50 CLT" },
     { id: 2, title: "Staking Complete", message: "Your stake is now active" },
   ]);
+
+  // Check authentication status
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user && location.pathname !== '/login' && location.pathname !== '/signup' && location.pathname !== '/') {
+        navigate('/login');
+      }
+    };
+    
+    checkAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT') {
+        navigate('/');
+      } else if (!session && location.pathname !== '/login' && location.pathname !== '/signup' && location.pathname !== '/') {
+        navigate('/login');
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [location.pathname, navigate]);
   
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -37,6 +63,23 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
     toast({
       title: "Notification marked as read",
     });
+  };
+
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to log out. Please try again.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: "You have been logged out successfully.",
+      });
+      navigate('/');
+    }
   };
 
   return (
@@ -134,10 +177,11 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Link to="/logout" className="text-red-500">
+                <DropdownMenuItem onClick={handleLogout} className="text-red-500">
+                  <div className="flex items-center">
+                    <LogOut className="w-4 h-4 mr-2" />
                     Logout
-                  </Link>
+                  </div>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
