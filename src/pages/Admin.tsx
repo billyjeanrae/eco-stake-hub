@@ -3,13 +3,13 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DataTable } from "@/components/ui/data-table";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
-import { Users, Wallet, Shield, Percent, History, Settings } from "lucide-react";
+import { Users, Wallet, Shield, History, Settings } from "lucide-react";
 
 const AdminDashboard = () => {
   const { toast } = useToast();
@@ -18,21 +18,38 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
 
   // Check if user is admin
-  const { data: profile } = useQuery({
+  const { data: profile, isLoading: isLoadingProfile } = useQuery({
     queryKey: ['profile'],
     queryFn: async () => {
+      console.log("Checking admin status...");
       const { data: { user } } = await supabase.auth.getUser();
+      
       if (!user) {
+        console.log("No user found, redirecting to login");
         navigate('/login');
         return null;
       }
-      const { data: profile } = await supabase
+
+      const { data: profile, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
         .single();
       
+      if (error) {
+        console.error("Error fetching profile:", error);
+        return null;
+      }
+
+      console.log("User profile:", profile);
+      
       if (profile?.role !== 'admin') {
+        console.log("User is not admin, redirecting to dashboard");
+        toast({
+          title: "Access Denied",
+          description: "You need admin privileges to access this page.",
+          variant: "destructive",
+        });
         navigate('/dashboard');
         return null;
       }
@@ -40,7 +57,22 @@ const AdminDashboard = () => {
     },
   });
 
-  // Fetch platform statistics
+  // Show loading state
+  if (isLoadingProfile) {
+    return (
+      <MainLayout>
+        <div className="flex items-center justify-center h-screen">
+          <p>Loading...</p>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  // If no profile or not admin, the navigate in useQuery will handle redirect
+  if (!profile) {
+    return null;
+  }
+
   const { data: stats } = useQuery({
     queryKey: ['platform-stats'],
     queryFn: async () => {
@@ -323,6 +355,7 @@ const AdminDashboard = () => {
       </div>
     </MainLayout>
   );
+
 };
 
 export default AdminDashboard;
