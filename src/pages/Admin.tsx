@@ -1,6 +1,5 @@
 import MainLayout from "@/components/layout/MainLayout";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,47 +9,59 @@ import { supabase } from "@/integrations/supabase/client";
 import { AdminStats } from "@/components/admin/AdminStats";
 import { UserManagement } from "@/components/admin/UserManagement";
 import { ValidatorManagement } from "@/components/admin/ValidatorManagement";
+import { useEffect } from "react";
 
 const AdminDashboard = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Check if user is admin
-  const { data: profile, isLoading: isLoadingProfile } = useQuery({
-    queryKey: ['profile'],
-    queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        navigate('/login');
-        return null;
-      }
+  // First, check authentication status
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        
+        if (authError || !user) {
+          toast({
+            title: "Authentication Error",
+            description: "Please log in to access the admin dashboard.",
+            variant: "destructive",
+          });
+          navigate('/login');
+          return;
+        }
 
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-      
-      if (error) {
-        console.error("Error fetching profile:", error);
-        return null;
-      }
-      
-      if (profile?.role !== 'admin') {
+        // Check if user is admin
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+
+        if (profileError || !profile || profile.role !== 'admin') {
+          toast({
+            title: "Access Denied",
+            description: "You need admin privileges to access this page.",
+            variant: "destructive",
+          });
+          navigate('/dashboard');
+        }
+      } catch (error) {
+        console.error("Auth check error:", error);
         toast({
-          title: "Access Denied",
-          description: "You need admin privileges to access this page.",
+          title: "Error",
+          description: "An error occurred while checking authentication.",
           variant: "destructive",
         });
-        navigate('/dashboard');
-        return null;
+        navigate('/login');
       }
-      return profile;
-    },
-  });
+    };
 
-  const { data: stats } = useQuery({
+    checkAuth();
+  }, [navigate, toast]);
+
+  // Fetch platform stats
+  const { data: stats, isLoading: isLoadingStats } = useQuery({
     queryKey: ['platform-stats'],
     queryFn: async () => {
       const [usersCount, totalStaked, activeValidators] = await Promise.all([
@@ -65,12 +76,10 @@ const AdminDashboard = () => {
         activeValidators: activeValidators.count || 0,
       };
     },
-    enabled: !!profile,
     refetchInterval: 30000,
   });
 
-  // Show loading state
-  if (isLoadingProfile) {
+  if (isLoadingStats) {
     return (
       <MainLayout>
         <div className="flex items-center justify-center h-screen">
@@ -78,11 +87,6 @@ const AdminDashboard = () => {
         </div>
       </MainLayout>
     );
-  }
-
-  // If no profile or not admin, the navigate in useQuery will handle redirect
-  if (!profile) {
-    return null;
   }
 
   return (
