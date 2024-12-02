@@ -1,4 +1,4 @@
-import { Bell, Menu, User, LayoutDashboard, History, Users, Trophy, Megaphone, Server, ArrowLeftRight, Settings, ChevronRight, ChevronLeft, Wallet, LogOut } from "lucide-react";
+import { Bell, Menu, User, LayoutDashboard, History, Users, Trophy, Megaphone, Server, ArrowLeftRight, Settings, ChevronRight, ChevronLeft, Wallet, LogOut, UserCheck, Key } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
@@ -22,6 +23,47 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
     { id: 1, title: "New Reward", message: "You earned 50 CLT" },
     { id: 2, title: "Staking Complete", message: "Your stake is now active" },
   ]);
+
+  // Check if user is admin
+  const { data: userRole } = useQuery({
+    queryKey: ['user-role'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+      
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+      
+      return profile?.role;
+    },
+  });
+
+  const isAdmin = userRole === 'admin';
+
+  // Navigation items based on role
+  const adminNavigation = [
+    { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+    { name: "Users", href: "/admin/users", icon: Users },
+    { name: "Validators", href: "/admin/validators", icon: Server },
+    { name: "User Sessions", href: "/admin/sessions", icon: UserCheck },
+    { name: "Platform Settings", href: "/admin/settings", icon: Settings },
+  ];
+
+  const userNavigation = [
+    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Validators", href: "/validators", icon: Server },
+    { name: "Swap", href: "/swap", icon: ArrowLeftRight },
+    { name: "History", href: "/history", icon: History },
+    { name: "Team", href: "/team", icon: Users },
+    { name: "Ranking", href: "/ranking", icon: Trophy },
+    { name: "Marketing", href: "/marketing", icon: Megaphone },
+    { name: "Wallet", href: "/wallet", icon: Wallet },
+  ];
+
+  const navigation = isAdmin ? adminNavigation : userNavigation;
 
   // Check authentication status
   useEffect(() => {
@@ -46,17 +88,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
       subscription.unsubscribe();
     };
   }, [location.pathname, navigate]);
-  
-  const navigation = [
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Validators", href: "/validators", icon: Server },
-    { name: "Swap", href: "/swap", icon: ArrowLeftRight },
-    { name: "History", href: "/history", icon: History },
-    { name: "Team", href: "/team", icon: Users },
-    { name: "Ranking", href: "/ranking", icon: Trophy },
-    { name: "Marketing", href: "/marketing", icon: Megaphone },
-    { name: "Wallet", href: "/wallet", icon: Wallet },
-  ];
 
   const handleNotificationClick = (id: number) => {
     setNotifications(notifications.filter(n => n.id !== id));
@@ -90,7 +121,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
             <img src="/placeholder.svg" alt="Logo" className="w-8 h-8" />
             {!isMinimized && (
               <span className="text-xl font-bold bg-gradient-to-r from-platform-green to-platform-green-dark bg-clip-text text-transparent">
-                Scavenger X
+                {isAdmin ? 'Admin Panel' : 'Scavenger X'}
               </span>
             )}
           </Link>
@@ -164,6 +195,23 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                {isAdmin && (
+                  <>
+                    <DropdownMenuItem>
+                      <Link to="/admin/sessions" className="flex items-center">
+                        <Key className="w-4 h-4 mr-2" />
+                        User Sessions
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Link to="/admin/settings" className="flex items-center">
+                        <Settings className="w-4 h-4 mr-2" />
+                        Platform Settings
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
                 <DropdownMenuItem>
                   <Link to="/profile" className="flex items-center">
                     <User className="w-4 h-4 mr-2" />

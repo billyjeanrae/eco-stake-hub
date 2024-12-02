@@ -16,6 +16,10 @@ import Marketing from "./pages/Marketing";
 import Wallet from "./pages/Wallet";
 import Settings from "./pages/Settings";
 import Admin from "./pages/Admin";
+import { PlatformSettings } from "./components/admin/PlatformSettings";
+import { UserSessions } from "./components/admin/UserSessions";
+import { UserManagement } from "./components/admin/UserManagement";
+import { ValidatorManagement } from "./components/admin/ValidatorManagement";
 
 const queryClient = new QueryClient();
 
@@ -38,7 +42,13 @@ const App = () => (
           <Route path="/marketing" element={<Marketing />} />
           <Route path="/wallet" element={<Wallet />} />
           <Route path="/settings" element={<Settings />} />
+          
+          {/* Admin routes */}
           <Route path="/admin" element={<Admin />} />
+          <Route path="/admin/users" element={<UserManagement />} />
+          <Route path="/admin/validators" element={<ValidatorManagement />} />
+          <Route path="/admin/sessions" element={<UserSessions />} />
+          <Route path="/admin/settings" element={<PlatformSettings />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
