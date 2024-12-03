@@ -1,9 +1,11 @@
 import { DataTable } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export const UserManagement = () => {
   const { toast } = useToast();
@@ -42,64 +44,83 @@ export const UserManagement = () => {
   });
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold">User Management</h2>
-        <Input
-          placeholder="Search users..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-xs"
-        />
+    <Card className="p-6 glass-card">
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-platform-green to-platform-green-dark bg-clip-text text-transparent">
+            User Management
+          </h2>
+          <Input
+            placeholder="Search users..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="max-w-xs bg-platform-card/50 border-white/10"
+          />
+        </div>
+
+        {loadingUsers ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-platform-green"></div>
+          </div>
+        ) : (
+          <DataTable
+            columns={[
+              {
+                key: "full_name",
+                header: "Name",
+                cell: (row: any) => (
+                  <div className="font-medium">{row.full_name}</div>
+                ),
+              },
+              {
+                key: "role",
+                header: "Role",
+                cell: (row: any) => (
+                  <Select
+                    value={row.role}
+                    onValueChange={(value) => 
+                      updateUserRoleMutation.mutate({
+                        userId: row.id,
+                        role: value,
+                      })
+                    }
+                  >
+                    <SelectTrigger className="w-32 bg-platform-card/50 border-white/10">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="user">User</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
+                    </SelectContent>
+                  </Select>
+                ),
+              },
+              {
+                key: "wallets",
+                header: "Wallet Balance",
+                cell: (row: any) => (
+                  <div className="font-mono">
+                    {row.wallets?.[0]?.balance?.toLocaleString() || "0"} CLT
+                  </div>
+                ),
+              },
+              {
+                key: "stakes",
+                header: "Total Staked",
+                cell: (row: any) => (
+                  <div className="font-mono">
+                    {row.stakes?.reduce(
+                      (sum: number, stake: any) => sum + Number(stake.amount),
+                      0
+                    ).toLocaleString() || "0"} CLT
+                  </div>
+                ),
+              },
+            ]}
+            data={users || []}
+          />
+        )}
       </div>
-      {loadingUsers ? (
-        <div>Loading users...</div>
-      ) : (
-        <DataTable
-          columns={[
-            {
-              key: "full_name",
-              header: "Name",
-              cell: (row: any) => row.full_name,
-            },
-            {
-              key: "role",
-              header: "Role",
-              cell: (row: any) => (
-                <select
-                  value={row.role}
-                  onChange={(e) => 
-                    updateUserRoleMutation.mutate({
-                      userId: row.id,
-                      role: e.target.value,
-                    })
-                  }
-                  className="bg-background border rounded px-2 py-1"
-                >
-                  <option value="user">User</option>
-                  <option value="admin">Admin</option>
-                </select>
-              ),
-            },
-            {
-              key: "wallets",
-              header: "Wallet Balance",
-              cell: (row: any) => 
-                row.wallets?.[0]?.balance?.toLocaleString() || "0",
-            },
-            {
-              key: "stakes",
-              header: "Total Staked",
-              cell: (row: any) =>
-                row.stakes?.reduce(
-                  (sum: number, stake: any) => sum + Number(stake.amount),
-                  0
-                ).toLocaleString() || "0",
-            },
-          ]}
-          data={users || []}
-        />
-      )}
-    </div>
+    </Card>
   );
 };
