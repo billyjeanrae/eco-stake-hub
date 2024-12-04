@@ -1,3 +1,4 @@
+import AdminLayout from "@/components/layout/AdminLayout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -47,55 +48,51 @@ export const UserSessions = () => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-platform-green"></div>
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold bg-gradient-to-r from-platform-green to-platform-green-dark bg-clip-text text-transparent">
-        User Sessions
-      </h2>
-      
-      <div className="grid gap-4">
-        {users?.map((user) => (
-          <Card key={user.id} className="p-6 glass-card hover:border-platform-green/20 transition-colors duration-300">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="p-3 rounded-full bg-platform-card/50">
-                  <User className="w-5 h-5 text-platform-green" />
-                </div>
-                <div>
-                  <h3 className="font-semibold">{user.full_name}</h3>
-                  <div className="flex items-center space-x-4 text-sm text-gray-400">
-                    <div className="flex items-center">
-                      <Shield className="w-4 h-4 mr-1" />
-                      {user.role}
+    <AdminLayout>
+      <div className="space-y-6 animate-fade-in">
+        {isLoading ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-platform-green"></div>
+          </div>
+        ) : (
+          <div className="grid gap-4">
+            {users?.map((user) => (
+              <Card key={user.id} className="p-6 glass-card hover:border-platform-green/20 transition-colors duration-300">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="p-3 rounded-full bg-platform-card/50">
+                      <User className="w-5 h-5 text-platform-green" />
                     </div>
-                    <div className="flex items-center">
-                      <Calendar className="w-4 h-4 mr-1" />
-                      {new Date(user.created_at).toLocaleDateString()}
+                    <div>
+                      <h3 className="font-semibold">{user.full_name}</h3>
+                      <div className="flex items-center space-x-4 text-sm text-gray-400">
+                        <div className="flex items-center">
+                          <Shield className="w-4 h-4 mr-1" />
+                          {user.role}
+                        </div>
+                        <div className="flex items-center">
+                          <Calendar className="w-4 h-4 mr-1" />
+                          {new Date(user.created_at).toLocaleDateString()}
+                        </div>
+                      </div>
                     </div>
                   </div>
+                  
+                  <Button
+                    variant="outline"
+                    onClick={() => handleImpersonateUser(user.id)}
+                    className="border-white/10 hover:border-platform-green/50"
+                  >
+                    <LogIn className="w-4 h-4 mr-2" />
+                    Login as User
+                  </Button>
                 </div>
-              </div>
-              
-              <Button
-                variant="outline"
-                onClick={() => handleImpersonateUser(user.id)}
-                className="border-white/10 hover:border-platform-green/50"
-              >
-                <LogIn className="w-4 h-4 mr-2" />
-                Login as User
-              </Button>
-            </div>
-          </Card>
-        ))}
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
-    </div>
+    </AdminLayout>
   );
 };

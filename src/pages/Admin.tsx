@@ -46,11 +46,6 @@ const AdminDashboard = () => {
         }
       } catch (error) {
         console.error("Auth check error:", error);
-        toast({
-          title: "Error",
-          description: "An error occurred while checking authentication.",
-          variant: "destructive",
-        });
         navigate('/login');
       }
     };
@@ -85,18 +80,12 @@ const AdminDashboard = () => {
   return (
     <AdminLayout>
       <div className="space-y-6 animate-fade-in">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-platform-green to-platform-green-dark bg-clip-text text-transparent">
-            Admin Dashboard
-          </h1>
-        </div>
-
         <AdminStats stats={stats} />
 
         <Card className="p-6 bg-platform-card/50 backdrop-blur-lg border-white/10">
           <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* Add quick action buttons or cards here */}
+            {/* Add quick action buttons here */}
           </div>
         </Card>
       </div>
