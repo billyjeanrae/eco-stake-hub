@@ -1,6 +1,6 @@
 import AdminLayout from "@/components/layout/AdminLayout";
 import { AdminStats } from "@/components/admin/AdminStats";
-import { Card } from "@/components/ui/card";
+import { QuickActions } from "@/components/admin/dashboard/QuickActions";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -81,13 +81,7 @@ const AdminDashboard = () => {
     <AdminLayout>
       <div className="space-y-6 animate-fade-in">
         <AdminStats stats={stats} />
-
-        <Card className="p-6 bg-platform-card/50 backdrop-blur-lg border-white/10">
-          <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* Add quick action buttons here */}
-          </div>
-        </Card>
+        <QuickActions />
       </div>
     </AdminLayout>
   );
