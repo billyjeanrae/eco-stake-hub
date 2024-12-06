@@ -6,10 +6,38 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { LogIn, User, Shield, Calendar } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export const UserSessions = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // Check user role before allowing admin actions
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+          
+          setIsAdmin(profile?.role === 'admin');
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to verify admin status",
+          variant: "destructive",
+        });
+      }
+    };
+
+    checkAdminStatus();
+  }, []);
 
   const { data: users, isLoading } = useQuery({
     queryKey: ['admin-users'],
@@ -21,16 +49,32 @@ export const UserSessions = () => {
       if (error) throw error;
       return data;
     },
+    enabled: isAdmin, // Only fetch if user is admin
   });
 
   const handleImpersonateUser = async (userId: string) => {
+    if (!isAdmin) {
+      toast({
+        title: "Unauthorized",
+        description: "Only administrators can impersonate users",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
+      // Use service role key for admin operations
+      const serviceRoleClient = supabase.auth.getClient({
+        apiKey: import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY,
+      });
+
       // Store admin token for later
       const adminToken = (await supabase.auth.getSession()).data.session?.access_token;
       localStorage.setItem('admin_token', adminToken || '');
       
-      // Sign in as the selected user
-      const { data: { user }, error } = await supabase.auth.admin.getUserById(userId);
+      // Sign in as the selected user using service role
+      const { data: { user }, error } = await serviceRoleClient.auth.admin.getUserById(userId);
+      
       if (error) throw error;
 
       toast({
@@ -47,6 +91,16 @@ export const UserSessions = () => {
       });
     }
   };
+
+  if (!isAdmin) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center h-64">
+          <p className="text-red-500">Access Denied: Administrator privileges required</p>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>

@@ -49,6 +49,9 @@ export type Database = {
           created_at: string | null
           full_name: string | null
           id: string
+          referral_code: string | null
+          referral_rewards_earned: number | null
+          referrer_id: string | null
           role: string | null
           updated_at: string | null
         }
@@ -56,6 +59,9 @@ export type Database = {
           created_at?: string | null
           full_name?: string | null
           id: string
+          referral_code?: string | null
+          referral_rewards_earned?: number | null
+          referrer_id?: string | null
           role?: string | null
           updated_at?: string | null
         }
@@ -63,10 +69,21 @@ export type Database = {
           created_at?: string | null
           full_name?: string | null
           id?: string
+          referral_code?: string | null
+          referral_rewards_earned?: number | null
+          referrer_id?: string | null
           role?: string | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_referrer_id_fkey"
+            columns: ["referrer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       rewards: {
         Row: {
@@ -303,7 +320,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_referral_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
