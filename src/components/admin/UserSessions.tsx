@@ -1,7 +1,7 @@
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -73,28 +73,34 @@ export const UserSessions = () => {
       // Sign out current session
       await supabase.auth.signOut();
 
-      // Get user email from profiles
-      const { data: userData } = await supabase
+      // Check if user exists before proceeding
+      const { data: userData, error: userError } = await supabase
         .from('profiles')
-        .select('id')
+        .select('*')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
 
-      if (userData) {
-        toast({
-          title: "Success",
-          description: "Switching to user account",
-        });
-        
-        // Redirect to dashboard - the app will handle authentication state
-        navigate('/dashboard');
+      if (userError || !userData) {
+        throw new Error('User not found or access denied');
       }
+
+      toast({
+        title: "Success",
+        description: `Switching to user account: ${userData.full_name}`,
+      });
+      
+      // Redirect to dashboard - the app will handle authentication state
+      navigate('/dashboard');
     } catch (error: any) {
+      console.error('Impersonation error:', error);
       toast({
         title: "Error",
-        description: error.message,
+        description: error.message || "Failed to switch user account",
         variant: "destructive",
       });
+      
+      // Clean up on error
+      localStorage.removeItem('admin_token');
     }
   };
 
