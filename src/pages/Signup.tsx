@@ -6,6 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { generateWalletFromMasterKey } from "@/utils/walletUtils";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -41,10 +42,24 @@ const Signup = () => {
 
       if (error) throw error;
 
-      toast({
-        title: "Success",
-        description: "Your account has been created successfully. Please check your email for verification.",
-      });
+      // Generate wallet for new user
+      if (data.user) {
+        try {
+          await generateWalletFromMasterKey(data.user.id);
+          toast({
+            title: "Success",
+            description: "Your account and wallet have been created successfully. Please check your email for verification.",
+          });
+        } catch (walletError: any) {
+          console.error('Error creating wallet:', walletError);
+          toast({
+            title: "Warning",
+            description: "Account created but wallet creation failed. Please contact support.",
+            variant: "destructive",
+          });
+        }
+      }
+
       navigate("/dashboard");
     } catch (error: any) {
       toast({
