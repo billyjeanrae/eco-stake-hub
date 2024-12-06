@@ -63,23 +63,18 @@ export const UserSessions = () => {
     }
 
     try {
-      // Use service role key for admin operations
-      const serviceRoleClient = supabase.auth.getClient({
-        apiKey: import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY,
-      });
-
       // Store admin token for later
       const adminToken = (await supabase.auth.getSession()).data.session?.access_token;
       localStorage.setItem('admin_token', adminToken || '');
       
-      // Sign in as the selected user using service role
-      const { data: { user }, error } = await serviceRoleClient.auth.admin.getUserById(userId);
+      // Sign in as the selected user using admin API
+      const { data, error } = await supabase.auth.admin.getUserById(userId);
       
       if (error) throw error;
 
       toast({
         title: "Success",
-        description: `Now viewing as ${user.email}`,
+        description: `Now viewing as ${data.user.email}`,
       });
       
       navigate('/dashboard');
