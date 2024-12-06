@@ -49,7 +49,7 @@ export const UserSessions = () => {
       if (error) throw error;
       return data;
     },
-    enabled: isAdmin, // Only fetch if user is admin
+    enabled: isAdmin,
   });
 
   const handleImpersonateUser = async (userId: string) => {
@@ -63,21 +63,32 @@ export const UserSessions = () => {
     }
 
     try {
-      // Store admin token for later
-      const adminToken = (await supabase.auth.getSession()).data.session?.access_token;
-      localStorage.setItem('admin_token', adminToken || '');
-      
-      // Sign in as the selected user using admin API
-      const { data, error } = await supabase.auth.admin.getUserById(userId);
-      
-      if (error) throw error;
+      // Store current admin session
+      const currentSession = await supabase.auth.getSession();
+      const adminToken = currentSession.data.session?.access_token;
+      if (adminToken) {
+        localStorage.setItem('admin_token', adminToken);
+      }
 
-      toast({
-        title: "Success",
-        description: `Now viewing as ${data.user.email}`,
-      });
-      
-      navigate('/dashboard');
+      // Sign out current session
+      await supabase.auth.signOut();
+
+      // Get user email from profiles
+      const { data: userData } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', userId)
+        .single();
+
+      if (userData) {
+        toast({
+          title: "Success",
+          description: "Switching to user account",
+        });
+        
+        // Redirect to dashboard - the app will handle authentication state
+        navigate('/dashboard');
+      }
     } catch (error: any) {
       toast({
         title: "Error",
