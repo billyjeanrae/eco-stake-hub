@@ -15,12 +15,9 @@ export const generateWalletFromMasterKey = async (userId: string) => {
     }
 
     // Create HD wallet from master key
-    const masterWallet = new ethers.Wallet(settings.value.toString());
+    const hdNode = ethers.HDNodeWallet.fromPhrase(settings.value.toString());
     const path = `m/44'/60'/0'/0/${userId}`; // Using userId as index
-    const derivedWallet = ethers.HDNodeWallet.fromMnemonic(
-      ethers.Mnemonic.fromPhrase(masterWallet.mnemonic?.phrase || ''),
-      path
-    );
+    const derivedWallet = hdNode.derivePath(path);
 
     // Store the wallet in the database
     const { error } = await supabase

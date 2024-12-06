@@ -5,11 +5,14 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Copy } from "lucide-react";
+import { Copy, Edit2, Save, X } from "lucide-react";
+import { useState } from "react";
 
 export const PlatformSettings = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [editingKeys, setEditingKeys] = useState<string[]>([]);
+  const [editValues, setEditValues] = useState<Record<string, string>>({});
 
   const { data: settings, isLoading } = useQuery({
     queryKey: ['platform-settings'],
@@ -32,18 +35,68 @@ export const PlatformSettings = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['platform-settings'] });
       toast({
         title: "Success",
         description: "Setting updated successfully",
       });
+      setEditingKeys(editingKeys.filter(key => key !== variables.key));
+      setEditValues(prev => {
+        const newValues = { ...prev };
+        delete newValues[variables.key];
+        return newValues;
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update setting",
+        variant: "destructive",
+      });
+      console.error("Update error:", error);
     },
   });
+
+  const startEditing = (key: string, currentValue: any) => {
+    setEditingKeys([...editingKeys, key]);
+    setEditValues({
+      ...editValues,
+      [key]: JSON.stringify(currentValue, null, 2),
+    });
+  };
+
+  const cancelEditing = (key: string) => {
+    setEditingKeys(editingKeys.filter(k => k !== key));
+    setEditValues(prev => {
+      const newValues = { ...prev };
+      delete newValues[key];
+      return newValues;
+    });
+  };
+
+  const handleSave = (key: string) => {
+    try {
+      const value = JSON.parse(editValues[key]);
+      updateSettingMutation.mutate({ key, value });
+    } catch (error) {
+      toast({
+        title: "Invalid JSON",
+        description: "Please enter valid JSON value",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <AdminLayout>
       <div className="space-y-6 animate-fade-in">
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-platform-green to-platform-green-dark bg-clip-text text-transparent">
+            Platform Settings
+          </h1>
+        </div>
+
         <div className="grid gap-6">
           {isLoading ? (
             <div className="flex items-center justify-center h-64">
@@ -61,35 +114,60 @@ export const PlatformSettings = () => {
                   </div>
                   
                   <div className="flex gap-4">
-                    <Input
-                      defaultValue={JSON.stringify(setting.value)}
-                      onBlur={(e) => {
-                        try {
-                          const value = JSON.parse(e.target.value);
-                          updateSettingMutation.mutate({ key: setting.key, value });
-                        } catch (error) {
-                          toast({
-                            title: "Invalid JSON",
-                            description: "Please enter valid JSON value",
-                            variant: "destructive",
-                          });
-                        }
-                      }}
-                      className="flex-1 bg-platform-card/50 border-white/10"
-                    />
-                    <Button 
-                      variant="outline" 
-                      onClick={() => {
-                        navigator.clipboard.writeText(JSON.stringify(setting.value, null, 2));
-                        toast({
-                          title: "Copied",
-                          description: "Setting value copied to clipboard",
-                        });
-                      }}
-                      className="border-white/10 hover:border-platform-green/50"
-                    >
-                      <Copy className="w-4 h-4" />
-                    </Button>
+                    {editingKeys.includes(setting.key) ? (
+                      <>
+                        <Input
+                          value={editValues[setting.key]}
+                          onChange={(e) => setEditValues({
+                            ...editValues,
+                            [setting.key]: e.target.value,
+                          })}
+                          className="flex-1 bg-platform-card/50 border-white/10 font-mono"
+                        />
+                        <Button 
+                          variant="outline"
+                          onClick={() => handleSave(setting.key)}
+                          className="border-white/10 hover:border-platform-green/50"
+                        >
+                          <Save className="w-4 h-4" />
+                        </Button>
+                        <Button 
+                          variant="outline"
+                          onClick={() => cancelEditing(setting.key)}
+                          className="border-white/10 hover:border-red-500/50"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Input
+                          value={JSON.stringify(setting.value)}
+                          readOnly
+                          className="flex-1 bg-platform-card/50 border-white/10"
+                        />
+                        <Button 
+                          variant="outline" 
+                          onClick={() => startEditing(setting.key, setting.value)}
+                          className="border-white/10 hover:border-platform-green/50"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          onClick={() => {
+                            navigator.clipboard.writeText(JSON.stringify(setting.value, null, 2));
+                            toast({
+                              title: "Copied",
+                              description: "Setting value copied to clipboard",
+                            });
+                          }}
+                          className="border-white/10 hover:border-platform-green/50"
+                        >
+                          <Copy className="w-4 h-4" />
+                        </Button>
+                      </>
+                    )}
                   </div>
                 </div>
               </Card>
