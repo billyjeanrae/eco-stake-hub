@@ -1,59 +1,86 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-screen pt-40 pb-32 px-6 overflow-hidden">
-      {/* Cosmic Background Effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-500/20 via-platform-dark to-platform-dark z-0"></div>
-      <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-platform-green/20 rounded-full blur-[100px] animate-pulse"></div>
-      <div className="absolute bottom-1/4 left-1/4 w-[30rem] h-[30rem] bg-purple-500/20 rounded-full blur-[120px] animate-pulse delay-1000"></div>
-      <div className="absolute top-1/3 left-1/2 w-64 h-64 bg-blue-500/20 rounded-full blur-[80px] animate-pulse delay-500"></div>
+    <section className="relative min-h-screen pt-32 pb-20 px-6 overflow-hidden flex items-center">
+      {/* Ambient Background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-background/95" />
+      
+      {/* Animated Orbs */}
+      <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[150px] animate-pulse-slow" />
+      <div className="absolute bottom-1/4 left-1/6 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[180px] animate-pulse-slow stagger-2" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[200px]" />
+      
+      {/* Grid Pattern Overlay */}
+      <div 
+        className="absolute inset-0 opacity-[0.02]"
+        style={{
+          backgroundImage: `linear-gradient(hsl(var(--foreground)) 1px, transparent 1px),
+                           linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)`,
+          backgroundSize: '60px 60px'
+        }}
+      />
       
       <div className="container mx-auto max-w-7xl relative z-10">
-        <div className="flex flex-col items-center text-center space-y-12">
-          <div className="space-y-8 animate-fade-in max-w-4xl">
-            <h1 className="text-6xl md:text-8xl font-bold leading-tight tracking-tight">
-              <span className="bg-gradient-to-r from-platform-green via-platform-green-dark to-purple-500 bg-clip-text text-transparent">
-                Pioneering AI and Sustainability in Blockchain
-              </span>
-            </h1>
-            <p className="text-2xl md:text-3xl text-gray-400 leading-relaxed max-w-3xl mx-auto">
-              CelerFi reimagines blockchain by seamlessly blending advanced AI technology with a commitment to eco-friendly innovation.
-            </p>
-            <div className="flex items-center justify-center space-x-6 pt-8">
-              <Link to="/signup">
-                <Button size="lg" className="bg-platform-green hover:bg-platform-green-dark text-black text-xl px-10 py-8 rounded-full transition-all duration-300 hover:scale-105">
-                  Start Building
-                  <ArrowRight className="ml-3 w-6 h-6" />
-                </Button>
-              </Link>
-              <Link to="#features">
-                <Button size="lg" variant="outline" className="border-2 border-platform-green text-platform-green hover:bg-platform-green/10 text-xl px-10 py-8 rounded-full">
-                  Learn More
-                </Button>
-              </Link>
+        <div className="flex flex-col items-center text-center space-y-8">
+          {/* Badge */}
+          <div className="animate-fade-up opacity-0 stagger-1">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium">
+              <Sparkles className="w-4 h-4" />
+              <span>Pioneering Sustainable Blockchain</span>
             </div>
           </div>
 
-          {/* Enhanced Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl mt-32">
-            <div className="glass-card p-10 animate-float backdrop-blur-xl">
-              <p className="text-platform-green font-bold text-5xl mb-4">$50M+</p>
-              <p className="text-2xl text-gray-400">Total Value Locked</p>
+          {/* Main Heading */}
+          <div className="space-y-6 max-w-5xl animate-fade-up opacity-0 stagger-2">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-display font-bold leading-[1.1] tracking-tight">
+              <span className="text-foreground">The Future of</span>
+              <br />
+              <span className="gradient-text">Eco-Friendly Staking</span>
+            </h1>
+            <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-3xl mx-auto text-balance">
+              CelerFi reimagines blockchain by seamlessly blending advanced AI technology 
+              with a commitment to sustainable, carbon-neutral innovation.
+            </p>
+          </div>
+
+          {/* CTAs */}
+          <div className="flex flex-col sm:flex-row items-center gap-4 pt-4 animate-fade-up opacity-0 stagger-3">
+            <Link to="/signup">
+              <Button size="lg" className="btn-primary text-lg h-14 px-8 gap-2">
+                Start Staking
+                <ArrowRight className="w-5 h-5" />
+              </Button>
+            </Link>
+            <Link to="#features">
+              <Button size="lg" variant="ghost" className="btn-outline text-lg h-14 px-8">
+                Explore Features
+              </Button>
+            </Link>
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full max-w-4xl mt-20 animate-fade-up opacity-0 stagger-4">
+            <div className="stat-card animate-float">
+              <p className="stat-value">$50M+</p>
+              <p className="stat-label">Total Value Locked</p>
             </div>
-            <div className="glass-card p-10 animate-float delay-300 backdrop-blur-xl">
-              <p className="text-platform-green font-bold text-5xl mb-4">15K+</p>
-              <p className="text-2xl text-gray-400">Active Validators</p>
+            <div className="stat-card animate-float stagger-2">
+              <p className="stat-value">15K+</p>
+              <p className="stat-label">Active Validators</p>
             </div>
-            <div className="glass-card p-10 animate-float delay-500 backdrop-blur-xl">
-              <p className="text-platform-green font-bold text-5xl mb-4">99.9%</p>
-              <p className="text-2xl text-gray-400">Carbon Neutral</p>
+            <div className="stat-card animate-float stagger-4">
+              <p className="stat-value">99.9%</p>
+              <p className="stat-label">Carbon Neutral</p>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Bottom Gradient Fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
     </section>
   );
 };
