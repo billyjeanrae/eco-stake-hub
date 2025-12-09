@@ -1,18 +1,14 @@
 import MainLayout from "@/components/layout/MainLayout";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Wallet, QrCode, Plus, Copy, ArrowUpRight } from "lucide-react";
+import { Wallet, Copy } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { QRCodeSVG } from "qrcode.react";
-import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 
 const WalletPage = () => {
   const { toast } = useToast();
-  const [showNewWallet, setShowNewWallet] = useState(false);
-  const [walletName, setWalletName] = useState("");
 
   const { data: wallets, isLoading } = useQuery({
     queryKey: ['user-wallets'],
@@ -40,55 +36,76 @@ const WalletPage = () => {
 
   return (
     <MainLayout>
-      <div className="space-y-6 animate-fade-in">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">My Wallets</h1>
+      <div className="space-y-8">
+        {/* Page Header */}
+        <div>
+          <h1 className="text-2xl font-display font-bold text-foreground">My Wallets</h1>
+          <p className="text-muted-foreground mt-1">Manage your connected wallets</p>
         </div>
 
         {isLoading ? (
           <div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-platform-green"></div>
+            <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {wallets?.map((wallet) => (
-              <Card
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {wallets?.map((wallet, index) => (
+              <div
                 key={wallet.id}
-                className="p-6 glass-card hover:scale-105 transition-transform duration-300"
+                className="glass-card p-6 animate-fade-up opacity-0"
+                style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
               >
-                <div className="flex justify-between items-start">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 rounded-full bg-primary/20">
+                <div className="flex items-start justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 rounded-xl bg-primary/10">
                       <Wallet className="w-6 h-6 text-primary" />
                     </div>
                     <div>
-                      <h3 className="font-bold">EVM Wallet</h3>
-                      <p className="text-sm text-gray-400">{wallet.address}</p>
+                      <h3 className="font-display font-bold text-foreground">EVM Wallet</h3>
+                      <p className="text-sm text-muted-foreground truncate max-w-[200px]">{wallet.address}</p>
                     </div>
                   </div>
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => handleCopyAddress(wallet.address)}
+                    className="text-muted-foreground hover:text-foreground"
                   >
                     <Copy className="w-4 h-4" />
                   </Button>
                 </div>
+
+                <div className="mb-6">
+                  <p className="text-sm text-muted-foreground mb-1">Balance</p>
+                  <p className="text-3xl font-display font-bold text-foreground">
+                    {wallet.balance} <span className="text-primary">CLT</span>
+                  </p>
+                </div>
+
+                <div className="flex justify-center p-4 bg-white rounded-xl">
+                  <QRCodeSVG
+                    value={wallet.address}
+                    size={180}
+                    level="H"
+                    includeMargin={false}
+                  />
+                </div>
+
                 <div className="mt-4">
-                  <p className="text-2xl font-bold">{wallet.balance} CLT</p>
+                  <p className="text-xs text-muted-foreground text-center">
+                    Scan to receive funds
+                  </p>
                 </div>
-                <div className="mt-4 flex justify-center">
-                  <div className="bg-white p-4 rounded-lg">
-                    <QRCodeSVG
-                      value={wallet.address}
-                      size={200}
-                      level="H"
-                      includeMargin={true}
-                    />
-                  </div>
-                </div>
-              </Card>
+              </div>
             ))}
+
+            {(!wallets || wallets.length === 0) && (
+              <div className="glass-card p-12 col-span-full text-center">
+                <Wallet className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-display font-semibold text-foreground mb-2">No Wallets Found</h3>
+                <p className="text-muted-foreground">Your wallet will be created automatically when you sign up.</p>
+              </div>
+            )}
           </div>
         )}
       </div>
