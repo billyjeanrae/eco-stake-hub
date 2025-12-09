@@ -5,86 +5,103 @@ import { Link } from "react-router-dom";
 const FeaturesSection = () => {
   const features = [
     {
-      icon: <Shield className="w-12 h-12 text-platform-green" />,
+      icon: Shield,
       title: "AI-Driven Validation",
-      description: "Secure transactions, earn rewards, and reduce energy consumption with intelligent, automated efficiency."
+      description: "Secure transactions, earn rewards, and reduce energy consumption with intelligent automation."
     },
     {
-      icon: <Leaf className="w-12 h-12 text-platform-green" />,
-      title: "Sustainable DeFi Solutions",
+      icon: Leaf,
+      title: "Sustainable DeFi",
       description: "Invest in green decentralized finance initiatives with our developer-friendly stack."
     },
     {
-      icon: <Zap className="w-12 h-12 text-platform-green" />,
+      icon: Zap,
       title: "Eco-Task Rewards",
-      description: "Participate in AI-curated tasks supporting green initiatives and earn CLT for your efforts."
+      description: "Participate in AI-curated green initiatives and earn CLT for your contributions."
     },
     {
-      icon: <Cpu className="w-12 h-12 text-platform-green" />,
-      title: "Scavenger X Technology",
-      description: "Unlock new possibilities with seamless blockchain migration and peak performance."
+      icon: Cpu,
+      title: "Scavenger X Tech",
+      description: "Unlock seamless blockchain migration and achieve peak performance."
     },
     {
-      icon: <Users className="w-12 h-12 text-platform-green" />,
-      title: "Community-Powered Growth",
+      icon: Users,
+      title: "Community Growth",
       description: "Stake, validate, and earn while supporting clean energy innovations."
     },
     {
-      icon: <Globe className="w-12 h-12 text-platform-green" />,
+      icon: Globe,
       title: "Global Impact",
-      description: "Join forces with a worldwide network committed to sustainable blockchain solutions."
+      description: "Join a worldwide network committed to sustainable blockchain solutions."
     }
   ];
 
   return (
-    <section id="features" className="relative py-40 px-6">
-      {/* Cosmic Background Effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-500/20 via-platform-dark to-platform-dark z-0"></div>
-      <div className="absolute top-1/3 right-1/4 w-[40rem] h-[40rem] bg-blue-500/20 rounded-full blur-[120px] animate-pulse"></div>
-      <div className="absolute bottom-1/3 left-1/4 w-[35rem] h-[35rem] bg-platform-green/20 rounded-full blur-[100px] animate-pulse delay-700"></div>
+    <section id="features" className="relative py-32 px-6">
+      {/* Ambient Background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-background/95 via-background to-background" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-primary/5 rounded-full blur-[200px]" />
       
       <div className="container mx-auto max-w-7xl relative z-10">
-        <div className="text-center mb-24">
-          <h2 className="text-5xl md:text-7xl font-bold mb-8 tracking-tight">
-            <span className="bg-gradient-to-r from-platform-green to-platform-green-dark bg-clip-text text-transparent">
-              What Sets CelerFi Apart?
-            </span>
+        {/* Section Header */}
+        <div className="text-center mb-20 space-y-4">
+          <h2 className="section-heading">
+            What Sets CelerFi Apart?
           </h2>
-          <p className="text-2xl md:text-3xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
-            Experience the next generation of sustainable blockchain technology with our innovative features and solutions.
+          <p className="section-subheading">
+            Experience the next generation of sustainable blockchain technology 
+            with our innovative features and solutions.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {features.map((feature, index) => (
-            <div 
-              key={index} 
-              className="glass-card p-10 hover:border-platform-green/50 transition-all duration-500 animate-fade-in rounded-3xl backdrop-blur-xl hover:scale-105"
-              style={{ animationDelay: `${index * 200}ms` }}
-            >
-              <div className="mb-8 p-4 bg-platform-green/10 rounded-2xl inline-block">{feature.icon}</div>
-              <h3 className="text-3xl font-bold mb-6 bg-gradient-to-r from-platform-green to-platform-green-dark bg-clip-text text-transparent">
-                {feature.title}
+        {/* Features Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {features.map((feature, index) => {
+            const Icon = feature.icon;
+            return (
+              <div 
+                key={index} 
+                className="glass-card-hover p-8 animate-fade-up opacity-0"
+                style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
+              >
+                <div className="feature-icon mb-6">
+                  <Icon className="w-full h-full" />
+                </div>
+                <h3 className="text-2xl font-display font-bold text-foreground mb-3">
+                  {feature.title}
+                </h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  {feature.description}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* CTA Section */}
+        <div className="mt-32 text-center">
+          <div className="glass-card p-12 md:p-16 max-w-4xl mx-auto relative overflow-hidden">
+            {/* Background Glow */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-primary/20 rounded-full blur-[100px]" />
+            
+            <div className="relative z-10 space-y-6">
+              <h3 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold gradient-text">
+                Ready to Join the Future?
               </h3>
-              <p className="text-gray-400 text-xl leading-relaxed">{feature.description}</p>
+              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+                Join thousands of validators and stakers contributing to a greener 
+                blockchain future while earning CLT rewards.
+              </p>
+              <div className="pt-4">
+                <Link to="/signup">
+                  <Button size="lg" className="btn-primary text-lg h-14 px-10 gap-2">
+                    Start Staking Now
+                    <ArrowRight className="w-5 h-5" />
+                  </Button>
+                </Link>
+              </div>
             </div>
-          ))}
-        </div>
-
-        {/* Enhanced Call to Action Section */}
-        <div className="mt-32 text-center max-w-4xl mx-auto">
-          <h3 className="text-4xl md:text-5xl font-bold mb-8 bg-gradient-to-r from-platform-green to-platform-green-dark bg-clip-text text-transparent">
-            Ready to Join the Future of Sustainable Staking?
-          </h3>
-          <p className="text-xl md:text-2xl text-gray-400 mb-12">
-            Join thousands of validators and stakers who are already contributing to a greener blockchain future while earning CLT rewards.
-          </p>
-          <Link to="/signup" className="inline-block">
-            <Button size="lg" className="bg-platform-green hover:bg-platform-green-dark text-black text-xl px-12 py-8 rounded-full transition-all duration-300 hover:scale-105">
-              Start Staking Now
-              <ArrowRight className="ml-3 w-6 h-6" />
-            </Button>
-          </Link>
+          </div>
         </div>
       </div>
     </section>
