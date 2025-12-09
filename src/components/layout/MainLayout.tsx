@@ -24,7 +24,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
     { id: 2, title: "Staking Complete", message: "Your stake is now active" },
   ]);
 
-  // Check if user is admin
   const { data: userRole } = useQuery({
     queryKey: ['user-role'],
     queryFn: async () => {
@@ -43,7 +42,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
   const isAdmin = userRole === 'admin';
 
-  // Navigation items based on role
   const adminNavigation = [
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
     { name: "Users", href: "/admin/users", icon: Users },
@@ -65,7 +63,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
   const navigation = isAdmin ? adminNavigation : userNavigation;
 
-  // Check authentication status
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -114,128 +111,142 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <div className="min-h-screen bg-platform-dark">
-      <aside className={`fixed top-0 left-0 h-full ${isMinimized ? 'w-20' : 'w-64'} bg-platform-card border-r border-white/10 transition-all duration-300`}>
-        <div className="p-6 flex items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2">
-            <img src="/placeholder.svg" alt="Logo" className="w-8 h-8" />
+    <div className="min-h-screen bg-background">
+      {/* Sidebar */}
+      <aside className={`fixed top-0 left-0 h-full ${isMinimized ? 'w-20' : 'w-64'} bg-card border-r border-border/50 transition-all duration-300 z-40`}>
+        {/* Logo */}
+        <div className="h-16 flex items-center px-6 border-b border-border/50">
+          <Link to="/" className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0">
+              <span className="text-primary font-display font-bold text-lg">C</span>
+            </div>
             {!isMinimized && (
-              <span className="text-xl font-bold bg-gradient-to-r from-platform-green to-platform-green-dark bg-clip-text text-transparent">
-                {isAdmin ? 'Admin Panel' : 'Scavenger X'}
+              <span className="text-lg font-display font-bold text-foreground">
+                {isAdmin ? 'Admin' : 'CelerFi'}
               </span>
             )}
           </Link>
         </div>
 
-        <nav className="mt-6">
-          {navigation.map((item) => (
-            <Link
-              key={item.name}
-              to={item.href}
-              className={`flex items-center px-6 py-3 text-sm space-x-3 ${
-                location.pathname === item.href
-                  ? "text-platform-green border-l-2 border-platform-green bg-platform-green/10"
-                  : "text-gray-400 hover:text-white hover:bg-white/5"
-              }`}
-            >
-              <item.icon className="w-5 h-5" />
-              {!isMinimized && <span>{item.name}</span>}
-            </Link>
-          ))}
+        {/* Navigation */}
+        <nav className="mt-6 px-3">
+          <div className="space-y-1">
+            {navigation.map((item) => {
+              const isActive = location.pathname === item.href;
+              return (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    isActive
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                  }`}
+                >
+                  <item.icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-primary' : ''}`} />
+                  {!isMinimized && <span>{item.name}</span>}
+                </Link>
+              );
+            })}
+          </div>
         </nav>
       </aside>
 
+      {/* Main Content */}
       <div className={`${isMinimized ? 'pl-20' : 'pl-64'} transition-all duration-300`}>
-        <header className="h-16 border-b border-white/10 flex items-center justify-between px-6 bg-platform-card/50 backdrop-blur-lg">
-          <div className="flex items-center space-x-4">
+        {/* Header */}
+        <header className="h-16 border-b border-border/50 flex items-center justify-between px-6 bg-card/80 backdrop-blur-xl sticky top-0 z-30">
+          <div className="flex items-center gap-4">
             <button 
-              className="p-2 hover:bg-white/5 rounded-lg"
+              className="p-2 hover:bg-secondary/50 rounded-lg transition-colors text-muted-foreground hover:text-foreground"
               onClick={() => setIsMinimized(!isMinimized)}
             >
               {isMinimized ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
             </button>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-2">
+            {/* Notifications */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" className="relative text-muted-foreground hover:text-foreground">
                   <Bell className="w-5 h-5" />
                   {notifications.length > 0 && (
-                    <span className="absolute top-0 right-0 w-2 h-2 bg-primary rounded-full" />
+                    <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full" />
                   )}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-80">
-                <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-                <DropdownMenuSeparator />
+              <DropdownMenuContent align="end" className="w-80 bg-card border-border/50">
+                <DropdownMenuLabel className="text-foreground">Notifications</DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-border/50" />
                 {notifications.map((notification) => (
                   <DropdownMenuItem 
                     key={notification.id}
                     onClick={() => handleNotificationClick(notification.id)}
+                    className="cursor-pointer"
                   >
                     <div className="flex flex-col">
-                      <span className="font-medium">{notification.title}</span>
-                      <span className="text-sm text-gray-400">{notification.message}</span>
+                      <span className="font-medium text-foreground">{notification.title}</span>
+                      <span className="text-sm text-muted-foreground">{notification.message}</span>
                     </div>
                   </DropdownMenuItem>
                 ))}
                 {notifications.length === 0 && (
-                  <DropdownMenuItem disabled>No new notifications</DropdownMenuItem>
+                  <DropdownMenuItem disabled className="text-muted-foreground">No new notifications</DropdownMenuItem>
                 )}
               </DropdownMenuContent>
             </DropdownMenu>
 
+            {/* User Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
                   <User className="w-5 h-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
+              <DropdownMenuContent align="end" className="bg-card border-border/50">
+                <DropdownMenuLabel className="text-foreground">My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-border/50" />
                 {isAdmin && (
                   <>
-                    <DropdownMenuItem>
-                      <Link to="/admin/sessions" className="flex items-center">
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin/sessions" className="flex items-center cursor-pointer">
                         <Key className="w-4 h-4 mr-2" />
                         User Sessions
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Link to="/admin/settings" className="flex items-center">
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin/settings" className="flex items-center cursor-pointer">
                         <Settings className="w-4 h-4 mr-2" />
                         Platform Settings
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuSeparator />
+                    <DropdownMenuSeparator className="bg-border/50" />
                   </>
                 )}
-                <DropdownMenuItem>
-                  <Link to="/profile" className="flex items-center">
+                <DropdownMenuItem asChild>
+                  <Link to="/profile" className="flex items-center cursor-pointer">
                     <User className="w-4 h-4 mr-2" />
                     Profile
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link to="/settings" className="flex items-center">
+                <DropdownMenuItem asChild>
+                  <Link to="/settings" className="flex items-center cursor-pointer">
                     <Settings className="w-4 h-4 mr-2" />
                     Settings
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout} className="text-red-500">
-                  <div className="flex items-center">
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Logout
-                  </div>
+                <DropdownMenuSeparator className="bg-border/50" />
+                <DropdownMenuItem onClick={handleLogout} className="text-destructive cursor-pointer">
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
         </header>
 
+        {/* Page Content */}
         <main className="p-6">{children}</main>
       </div>
     </div>

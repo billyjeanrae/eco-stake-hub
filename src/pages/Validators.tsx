@@ -1,7 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import MainLayout from "@/components/layout/MainLayout";
-import { Server, Clock, DollarSign } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Server, Clock, DollarSign, ArrowRight } from "lucide-react";
 
 const Validators = () => {
   const validatorTiers = [
@@ -16,59 +15,79 @@ const Validators = () => {
   const stats = [
     { label: "Your Validators", value: "0", icon: Server },
     { label: "Total Staked", value: "0 CLT", icon: DollarSign },
-    { label: "Next Earning Cycle", value: "16h 12m 10s", icon: Clock },
+    { label: "Next Cycle", value: "16h 12m 10s", icon: Clock },
   ];
 
   return (
     <MainLayout>
-      <div className="space-y-6 animate-fade-in">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {stats.map((stat) => (
-            <Card key={stat.label} className="p-6 glass-card">
-              <div className="flex items-center space-x-4">
-                <div className="p-3 rounded-full bg-platform-green/10">
-                  <stat.icon className="w-6 h-6 text-platform-green" />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-400">{stat.label}</p>
-                  <p className="text-2xl font-bold">{stat.value}</p>
-                </div>
-              </div>
-            </Card>
-          ))}
+      <div className="space-y-8">
+        {/* Page Header */}
+        <div>
+          <h1 className="text-2xl font-display font-bold text-foreground">Validators</h1>
+          <p className="text-muted-foreground mt-1">Stake validators and earn high APY rewards</p>
         </div>
 
-        <Card className="p-6 glass-card">
-          <h2 className="text-xl font-bold mb-6">Purchase Validator</h2>
-          <div className="space-y-4">
-            {validatorTiers.map((tier) => (
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {stats.map((stat, index) => {
+            const Icon = stat.icon;
+            return (
+              <div 
+                key={stat.label} 
+                className="glass-card p-6 animate-fade-up opacity-0"
+                style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-xl bg-primary/10">
+                    <Icon className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">{stat.label}</p>
+                    <p className="text-2xl font-display font-bold text-foreground">{stat.value}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Validator Tiers */}
+        <div className="glass-card p-6">
+          <h2 className="text-xl font-display font-bold text-foreground mb-6">Purchase Validator</h2>
+          <div className="space-y-3">
+            {validatorTiers.map((tier, index) => (
               <div
                 key={tier.tier}
-                className="p-4 rounded-lg bg-platform-card border border-white/5 hover:border-platform-green/50 transition-colors"
+                className="p-5 rounded-xl bg-secondary/30 border border-border/50 hover:border-primary/30 transition-all duration-300 animate-fade-up opacity-0"
+                style={{ animationDelay: `${(index + 3) * 100}ms`, animationFillMode: 'forwards' }}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div className="p-2 rounded-lg bg-platform-green/10">
-                      <Server className="w-5 h-5 text-platform-green" />
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 rounded-xl bg-primary/10">
+                      <Server className="w-6 h-6 text-primary" />
                     </div>
                     <div>
-                      <h3 className="font-semibold">Tier {tier.tier} Validator</h3>
-                      <p className="text-sm text-gray-400">
-                        Minimum Investment: {tier.minInvestment} CLT
+                      <h3 className="font-display font-semibold text-foreground">Tier {tier.tier} Validator</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Minimum Investment: {tier.minInvestment.toLocaleString()} CLT
                       </p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-platform-green font-bold">APY: {tier.apy}</p>
-                    <Button variant="outline" className="mt-2 border-platform-green text-platform-green hover:bg-platform-green hover:text-black">
+                  <div className="flex items-center gap-4 sm:gap-6">
+                    <div className="text-right">
+                      <p className="text-xs text-muted-foreground uppercase tracking-wide">APY</p>
+                      <p className="text-xl font-display font-bold text-primary">{tier.apy}</p>
+                    </div>
+                    <Button className="btn-primary h-10 px-6 gap-2">
                       Purchase
+                      <ArrowRight className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-        </Card>
+        </div>
       </div>
     </MainLayout>
   );
